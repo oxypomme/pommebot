@@ -1,0 +1,28 @@
+{
+  "name": "pommebot",
+  "version": "1.0.0",
+  "description": "A simple Discord bot for my personnal server",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "ts-node api.js",
+    "start:prod": "ts-node api.js",
+    "dev": "nodemon api.ts"
+  },
+  "repository": "https://github.com/oxypomme/pommebot.git",
+  "author": "OxyTom <oxytom8@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^12.5.3",
+    "dotenv": "^8.2.0",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.4"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/node": "^15.3.0",
+    "@typescript-eslint/eslint-plugin": "^4.24.0",
+    "@typescript-eslint/parser": "^4.24.0",
+    "eslint": "^7.26.0",
+    "nodemon": "^2.0.7"
+  }
+}
