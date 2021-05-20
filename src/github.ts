@@ -1,6 +1,9 @@
 import { Octokit } from "@octokit/core";
 import { Webhook } from "discord.js";
 
+//TODO: Removing channels when archiving/deleting repos
+//TODO: Webhooks ? https://docs.github.com/en/developers/apps/building-github-apps/creating-a-github-app
+
 const octokit = new Octokit({ auth: process.env.GH_AUTH });
 const startDate = new Date();
 

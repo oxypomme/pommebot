@@ -2,6 +2,8 @@ import { Client } from "discord.js";
 import "./env";
 import { ghCreateWH, ghFetch } from "./github";
 
+//TODO: Removing ADMIN permission
+
 const client = new Client();
 client.login(process.env.BOT_TOKEN);
 
