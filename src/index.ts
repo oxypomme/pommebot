@@ -3,6 +3,8 @@ import "./env";
 import { ghCreateWH, ghFetch } from "./github";
 
 //TODO: Removing ADMIN permission
+//TODO: try-catch
+//TODO: Config
 
 const client = new Client();
 client.login(process.env.BOT_TOKEN);
@@ -19,12 +21,13 @@ const seekingNewRepos = async () => {
   if (result) {
     lastGhEvent = result;
     const chan = await guild?.channels.create(
-      `🤖${result.repo.name.split("/")[1]}`
+      `🤖${result.repo.name.split("/")[1]}`,
+      {
+        topic: `https://github.com/${result.repo.name}`,
+        parent: process.env.DEFAULT_CATEGORY_ID || "",
+      }
     );
     try {
-      await chan?.setTopic(`https://github.com/${result.repo.name}`);
-      await chan?.setParent(process.env.DEFAULT_CATEGORY_ID || "");
-
       const webhook = await chan?.createWebhook(
         `GitHub-${result.repo.name.split("/")[1]}`
       );
