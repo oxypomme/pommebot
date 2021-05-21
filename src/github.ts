@@ -31,7 +31,7 @@ export const ghFetch = ({ id: lastId }: any): Promise<any | null> =>
   });
 
 export const ghCreateWH = async (
-  { name }: any,
+  name: string,
   { url }: Webhook
 ): Promise<void> => {
   console.log(name.split("/"));

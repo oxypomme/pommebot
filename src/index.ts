@@ -1,46 +1,22 @@
-import { Client } from "discord.js";
-import "./env";
-import { ghCreateWH, ghFetch } from "./github";
+import "./.env";
+import { createChannel } from "./channels";
+import client from "./discord";
+import { ghFetch } from "./github";
 
 //TODO: Removing ADMIN permission
 //TODO: try-catch
 //TODO: Config
-
-const client = new Client();
-client.login(process.env.BOT_TOKEN);
 
 let lastGhEvent: any = {
   id: "",
 };
 
 const seekingNewRepos = async () => {
-  const guild = client.guilds.cache.get(process.env.SERVER_ID || "");
-
   const result = await ghFetch(lastGhEvent);
   console.log(`fetched from octokit at ${new Date().toLocaleTimeString()}`);
   if (result) {
     lastGhEvent = result;
-    const chan = await guild?.channels.create(
-      `🤖${result.repo.name.split("/")[1]}`,
-      {
-        topic: `https://github.com/${result.repo.name}`,
-        parent: process.env.DEFAULT_CATEGORY_ID || "",
-      }
-    );
-    try {
-      const webhook = await chan?.createWebhook(
-        `GitHub-${result.repo.name.split("/")[1]}`
-      );
-      if (webhook) {
-        await ghCreateWH(result.repo, webhook);
-        await chan?.send(
-          `Webhook connecté à <https://github.com/${result.repo.name}>`
-        );
-      }
-    } catch (err) {
-      console.log(err);
-      await chan?.delete();
-    }
+    await createChannel(result.repo.name);
   }
 };
 
@@ -53,7 +29,3 @@ client.on("ready", async function () {
     setInterval(seekingNewRepos, 5 * 60 * 1000);
   }
 });
-
-client.on("error", (e) => console.log(e));
-client.on("warn", (e) => console.log(e));
-client.on("debug", (e) => console.log(e));
