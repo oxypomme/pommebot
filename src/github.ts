@@ -1,13 +1,10 @@
 import { Octokit } from "@octokit/core";
 import { Webhook } from "discord.js";
 
-//TODO: Removing channels when archiving/deleting repos
-//TODO: Webhooks ? https://docs.github.com/en/developers/apps/building-github-apps/creating-a-github-app
-
 const octokit = new Octokit({ auth: process.env.GH_AUTH });
 const startDate = new Date();
 
-export const ghFetch = ({ id: lastId }: any): Promise<any | null> =>
+export const ghFetch = ({ lastCreate, lastDelete }: any): Promise<any | null> =>
   new Promise((resolve) => {
     octokit
       .request("GET /users/{username}/events/public", {
@@ -15,17 +12,34 @@ export const ghFetch = ({ id: lastId }: any): Promise<any | null> =>
       })
       .then(({ status, data }) => {
         if (status === 200) {
-          const evs = data.filter(
+          const newCreate = data.filter(
             ({ type, created_at, payload }) =>
               type === "CreateEvent" &&
               (payload as any).ref_type === "repository" &&
               (created_at ? new Date(created_at) > startDate : false)
-          );
-          if (lastId !== evs[0]?.id) {
-            resolve(evs[0]);
-          } else {
-            resolve(null);
+          )[0];
+
+          const newDelete = data.filter(
+            ({ type, created_at, payload }) =>
+              type === "DeleteEvent" &&
+              (payload as any).ref_type === "repository" &&
+              (created_at ? new Date(created_at) > startDate : false)
+          )[0];
+
+          let result = {};
+          if (lastCreate?.id !== newCreate?.id) {
+            result = {
+              ...result,
+              lastCreate: newCreate,
+            };
           }
+          if (lastDelete?.id !== newDelete?.id) {
+            result = {
+              ...result,
+              lastDelete: newDelete,
+            };
+          }
+          resolve(result);
         }
       });
   });
@@ -34,7 +48,6 @@ export const ghCreateWH = async (
   name: string,
   { url }: Webhook
 ): Promise<void> => {
-  console.log(name.split("/"));
   await octokit.request("POST /repos/{owner}/{repo}/hooks", {
     owner: name.split("/")[0],
     repo: name.split("/")[1],
@@ -44,4 +57,23 @@ export const ghCreateWH = async (
       url: `${url}/github`,
     },
   });
+};
+
+export const ghRemoveWH = async (name: string): Promise<void> => {
+  const { status, data: webhooks } = await octokit.request(
+    "GET /repos/{owner}/{repo}/hooks",
+    {
+      owner: name.split("/")[0],
+      repo: name.split("/")[1],
+    }
+  );
+  if (status === 200) {
+    for (const { id: hook_id } of webhooks) {
+      await octokit.request("DELETE /repos/{owner}/{repo}/hooks/{hook_id}", {
+        owner: name.split("/")[0],
+        repo: name.split("/")[1],
+        hook_id,
+      });
+    }
+  }
 };

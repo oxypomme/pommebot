@@ -1,22 +1,24 @@
 import "./.env";
-import { createChannel } from "./channels";
+import { createChannel, deleteChannel } from "./channels";
 import client from "./discord";
 import { ghFetch } from "./github";
 
-//TODO: Removing ADMIN permission
 //TODO: try-catch
 //TODO: Config
 
-let lastGhEvent: any = {
-  id: "",
-};
+let lastGhEvent: any = {};
 
-const seekingNewRepos = async () => {
+const seekingRepos = async () => {
   const result = await ghFetch(lastGhEvent);
   console.log(`fetched from octokit at ${new Date().toLocaleTimeString()}`);
-  if (result) {
+  if (result.lastCreate || result.lastDelete) {
     lastGhEvent = result;
-    await createChannel(result.repo.name);
+  }
+  if (result.lastCreate) {
+    await createChannel(result.lastCreate.repo.name);
+  }
+  if (result.lastDelete) {
+    await deleteChannel(result.lastDelete.repo.name);
   }
 };
 
@@ -25,7 +27,7 @@ client.on("ready", async function () {
     console.log(`Connecté en tant que ${client.user.tag}`);
     await client.user.setActivity("@OxyTom#1831", { type: "WATCHING" });
 
-    seekingNewRepos();
-    setInterval(seekingNewRepos, 5 * 60 * 1000);
+    seekingRepos();
+    setInterval(seekingRepos, 5 * 60 * 1000);
   }
 });
