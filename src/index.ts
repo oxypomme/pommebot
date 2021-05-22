@@ -3,6 +3,11 @@ import { createChannel, deleteChannel } from "./channels";
 import client from "./discord";
 import { ghFetch } from "./github";
 
+/*TODO: Orga - Webhook
+  New member -> If on server, add role + say hello
+  New on Discord -> If in orga, add role + say hello
+  New repo -> New channel in category
+*/
 //TODO: try-catch
 //TODO: Config
 
