@@ -3,7 +3,7 @@ import GHWebhook from "express-github-webhook";
 import { createChannel, deleteChannel, renameChannel } from "../bot/channels";
 import { IPayload } from "./GHTypes";
 
-const GHHandler = GHWebhook({ path: "/gh", secret: process.env.GH_WS_SECRET });
+const GHHandler = GHWebhook({ path: "/gh", secret: process.env.GH_WH_SECRET });
 
 const app = express();
 app.use(express.json());
