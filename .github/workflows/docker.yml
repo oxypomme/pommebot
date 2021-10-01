@@ -1,0 +1,30 @@
+name: Docker
+
+on:
+  push: [main]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    name: "Publish on the server"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          ref: release
+
+      - name: Adding Dev Server to known hosts
+        run: mkdir --parents $HOME/.ssh && ssh-keyscan -H ${{ secrets.SSH_HOST }} >> $HOME/.ssh/known_hosts
+
+      - name: Create Docker Context
+        uses: arwynfr/actions-docker-context@v1
+        with:
+          docker_host: "ssh://${{ secrets.DOCKER_HOST }}"
+          context_name: "server"
+          ssh_key: ${{ secrets.SSH_KEY }}
+
+      - name: Build Dockerfile
+        run: docker
+
+      - name: Run Dockerfile
+        run: docker --context server
