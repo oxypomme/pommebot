@@ -1,7 +1,12 @@
-FROM node:12.18-alpine
+FROM node:lts-alpine
+
 ENV NODE_ENV=production
 WORKDIR /usr/src/app
-COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
-RUN npm install --production --silent && mv node_modules ../
-COPY . .
-CMD ["npm", "start"]
+
+COPY . ./
+
+RUN yarn --prod
+
+CMD yarn start:prod
+
+EXPOSE 8080

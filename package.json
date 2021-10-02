@@ -4,8 +4,8 @@
   "description": "A simple Discord bot for my personnal server",
   "main": "src/index.ts",
   "scripts": {
-    "start": "ts-node",
-    "start:prod": "ts-node",
+    "start": "ts-node src/index.ts",
+    "start:prod": "ts-node --transpile-only src/index.ts",
     "dev": "nodemon"
   },
   "repository": "https://github.com/oxypomme/pommebot.git",
