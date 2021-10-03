@@ -2,10 +2,11 @@ import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import Logger from "js-logger";
 import repo from "./repo";
+import utils from "./utils";
 
 const rest = new REST({ version: "9" }).setToken(process.env.BOT_TOKEN ?? "");
 
-const commands = [...repo];
+const commands = [...repo, ...utils];
 
 (async () => {
   try {
@@ -28,7 +29,7 @@ const commands = [...repo];
       }
     );
 
-    Logger.get("Discord").debug(
+    Logger.get("Discord").info(
       "Successfully reloaded application (/) commands."
     );
   } catch (err) {
