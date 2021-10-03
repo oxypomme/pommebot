@@ -28,10 +28,8 @@ Logger.useDefaults({
       color,
       new Date().toISOString(),
       NodeColors.Bright + context.name + NodeColors.Reset + color,
-      `${NodeColors.Reverse} ` +
-        context.level.name +
-        ` ${NodeColors.Reset}` +
-        color
+      `${NodeColors.Reverse} ` + context.level.name + ` ${NodeColors.Reset}`,
+      color
     );
   },
 });
