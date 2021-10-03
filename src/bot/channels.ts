@@ -1,4 +1,5 @@
 import { TextChannel } from "discord.js";
+import Logger from "js-logger";
 import client from "./discord";
 import { ghCreateWH } from "./github";
 
@@ -17,7 +18,7 @@ export const createWH = async (
       await chan?.send(`Webhook connecté à <https://github.com/${repoName}>`);
     }
   } catch (err) {
-    console.log(err);
+    Logger.get("Discord").error(err);
     await chan?.delete();
   }
 };
@@ -33,10 +34,8 @@ export const createChannel = async (repoName: string): Promise<void> => {
 export const deleteChannel = async (repoName: string): Promise<void> => {
   const chan = guild()?.channels.cache.find(
     (c) => c.name === `🤖${repoName.toLowerCase().split("/")[1]}`
-  );
-  await (chan as TextChannel)?.send(
-    `<https://github.com/${repoName}> a été supprimé !`
-  );
+  ) as TextChannel;
+  await chan?.send(`<https://github.com/${repoName}> a été supprimé !`);
   await chan?.delete();
 };
 
@@ -46,11 +45,9 @@ export const renameChannel = async (
 ): Promise<void> => {
   const chan = guild()?.channels.cache.find(
     (c) => c.name === `🤖${from.toLowerCase()}`
-  );
-  await (chan as TextChannel)?.send(
-    `<${
-      (chan as TextChannel)?.topic
-    }> a été renommé en <https://github.com/${to}> !`
+  ) as TextChannel;
+  await chan?.send(
+    `<${chan?.topic}> a été renommé en <https://github.com/${to}> !`
   );
   await chan?.setTopic(`https://github.com/${to}`);
   await chan?.setName(`🤖${to.split("/")[1]}`);

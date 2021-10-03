@@ -1,3 +1,5 @@
+import Logger from "js-logger";
+import commands from "./commands";
 import client from "./discord";
 
 /*TODO: Orga - Webhook
@@ -8,12 +10,25 @@ import client from "./discord";
 //TODO: try-catch
 //TODO: Config
 
-client.on("ready", async function () {
+client.on("ready", function () {
   if (client.user) {
-    console.log(`Connecté en tant que ${client.user.tag}`);
-    await client.user.setActivity("@OxyTom#1831", { type: "WATCHING" });
+    Logger.get("Discord").info(`Connected as ${client.user.tag}`);
+    client.user.setActivity("some GitHub events", { type: "WATCHING" });
 
     // seekingRepos();
     // setInterval(seekingRepos, 5 * 60 * 1000);
+  }
+});
+
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  if (interaction.commandName === "ping") {
+    await interaction.reply("Pong!");
+  }
+
+  const command = commands.find((c) => c.name === interaction.commandName);
+  if (command) {
+    command.action(interaction);
   }
 });
