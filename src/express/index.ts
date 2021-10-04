@@ -2,19 +2,24 @@ import { createNodeMiddleware } from "@octokit/app";
 import express from "express";
 import Logger from "js-logger";
 import { createChannel, deleteChannel, renameChannel } from "../bot/channels";
-import { NodeColors } from "../NodeColors";
 import GHApp from "../github";
 import { removeWH } from "../github/webhooks";
+import { NodeColors } from "../NodeColors";
 
 const app = express();
 app.use(express.json());
-app.use(createNodeMiddleware(GHApp));
+app.use(
+  createNodeMiddleware(GHApp, {
+    pathPrefix: "/gh",
+    // log: Logger.get("GitHub"),
+  })
+);
 
 app.use(express.static(__dirname + "/public"));
 
-// GHApp.webhooks.onAny(({id, name, payload}) => {
-//   console.log(`Getting ${name}`);
-// })
+GHApp.webhooks.onAny(({ id, name, payload }) => {
+  console.log(`Getting ${name}`);
+});
 
 GHApp.webhooks.on("repository.created", async ({ payload }) => {
   await createChannel(payload.repository);
