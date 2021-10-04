@@ -2,7 +2,7 @@ import { TextChannel } from "discord.js";
 import { Repository } from "@octokit/webhooks-types";
 import Logger from "js-logger";
 import client from "./discord";
-import { ghCreateWH } from "./github";
+import { createWH as ghCreateWH } from "../github/webhooks";
 
 const guild = () => client.guilds.cache.get(process.env.SERVER_ID || "");
 
