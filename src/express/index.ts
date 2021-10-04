@@ -4,6 +4,7 @@ import Logger from "js-logger";
 import { createChannel, deleteChannel, renameChannel } from "../bot/channels";
 import { NodeColors } from "../NodeColors";
 import GHApp from "../github";
+import { removeWH } from "../github/webhooks";
 
 const app = express();
 app.use(express.json());
@@ -23,6 +24,13 @@ GHApp.webhooks.on("repository.renamed", async ({ payload }) => {
 });
 GHApp.webhooks.on("repository.deleted", async ({ payload }) => {
   await deleteChannel(payload.repository);
+});
+GHApp.webhooks.on("repository.archived", async ({ payload }) => {
+  await deleteChannel(payload.repository);
+  await removeWH(payload.repository);
+});
+GHApp.webhooks.on("repository.unarchived", async ({ payload }) => {
+  await createChannel(payload.repository);
 });
 
 app.listen(process.env.HTTP_PORT, () => {

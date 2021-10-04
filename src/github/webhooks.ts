@@ -18,12 +18,16 @@ export const createWH = async (
   });
 };
 
-export const removeWH = async (name: string): Promise<void> => {
+export const removeWH = async ({
+  name,
+  full_name,
+  owner,
+}: Repository): Promise<void> => {
   const { status, data: webhooks } = await GHApp.octokit.request(
     "GET /repos/{owner}/{repo}/hooks",
     {
-      owner: name.split("/")[0],
-      repo: name.split("/")[1],
+      owner: owner.name || full_name.split("/")[0],
+      repo: name,
     }
   );
   if (status === 200) {
@@ -31,8 +35,8 @@ export const removeWH = async (name: string): Promise<void> => {
       await GHApp.octokit.request(
         "DELETE /repos/{owner}/{repo}/hooks/{hook_id}",
         {
-          owner: name.split("/")[0],
-          repo: name.split("/")[1],
+          owner: owner.name || full_name.split("/")[0],
+          repo: name,
           hook_id,
         }
       );
