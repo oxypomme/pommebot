@@ -1,42 +1,28 @@
+import { createNodeMiddleware } from "@octokit/app";
 import express from "express";
-import GHWebhook from "express-github-webhook";
 import Logger from "js-logger";
 import { createChannel, deleteChannel, renameChannel } from "../bot/channels";
 import { NodeColors } from "../NodeColors";
-import { IPayload } from "./GHTypes";
-
-const GHHandler = GHWebhook({ path: "/gh", secret: process.env.GH_WH_SECRET });
+import GHApp from "../github";
 
 const app = express();
 app.use(express.json());
-app.use(GHHandler);
+app.use(createNodeMiddleware(GHApp));
 
 app.use(express.static(__dirname + "/public"));
 
-// GHHandler.on("*", function (event: GHEvent, repo: string, data: IPayload) {
-//   console.log(`Getting ${event}`);
-// });
+// GHApp.webhooks.onAny(({id, name, payload}) => {
+//   console.log(`Getting ${name}`);
+// })
 
-GHHandler.on("repository", async (repo: string, data: IPayload) => {
-  switch (data.action) {
-    case "created":
-      await createChannel(`${data.repository.owner.login}/${repo}`);
-      break;
-
-    case "renamed":
-      await renameChannel(
-        data.changes.repository.name.from,
-        `${data.repository.owner.login}/${repo}`
-      );
-      break;
-
-    case "deleted":
-      await deleteChannel(`${data.repository.owner.login}/${repo}`);
-      break;
-
-    default:
-      break;
-  }
+GHApp.webhooks.on("repository.created", async ({ payload }) => {
+  await createChannel(payload.repository);
+});
+GHApp.webhooks.on("repository.renamed", async ({ payload }) => {
+  await renameChannel(payload.changes.repository.name.from, payload.repository);
+});
+GHApp.webhooks.on("repository.deleted", async ({ payload }) => {
+  await deleteChannel(payload.repository);
 });
 
 app.listen(process.env.HTTP_PORT, () => {

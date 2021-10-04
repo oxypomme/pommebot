@@ -33,5 +33,3 @@ Logger.useDefaults({
     );
   },
 });
-const loggerD = Logger.get("Discord");
-const loggerE = Logger.get("Express");

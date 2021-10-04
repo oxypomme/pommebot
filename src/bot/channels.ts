@@ -1,4 +1,5 @@
 import { TextChannel } from "discord.js";
+import { Repository } from "@octokit/webhooks-types";
 import Logger from "js-logger";
 import client from "./discord";
 import { ghCreateWH } from "./github";
@@ -6,16 +7,16 @@ import { ghCreateWH } from "./github";
 const guild = () => client.guilds.cache.get(process.env.SERVER_ID || "");
 
 export const createWH = async (
-  repoName: string,
+  repo: Repository,
   chan: TextChannel | undefined
 ): Promise<void> => {
   try {
-    const webhook = await chan?.createWebhook(
-      `GitHub-${repoName.split("/")[1]}`
-    );
+    const webhook = await chan?.createWebhook(`GitHub-${repo.name}`);
     if (webhook) {
-      await ghCreateWH(repoName, webhook);
-      await chan?.send(`Webhook connecté à <https://github.com/${repoName}>`);
+      await ghCreateWH(repo, webhook);
+      await chan?.send(
+        `Webhook connecté à <https://github.com/${repo.full_name}>`
+      );
     }
   } catch (err) {
     Logger.get("Discord").error(err);
@@ -23,32 +24,35 @@ export const createWH = async (
   }
 };
 
-export const createChannel = async (repoName: string): Promise<void> => {
-  const chan = await guild()?.channels.create(`🤖${repoName.split("/")[1]}`, {
-    topic: `https://github.com/${repoName}`,
+export const createChannel = async (repo: Repository): Promise<void> => {
+  const chan = await guild()?.channels.create(`🤖${repo.name}`, {
+    topic: `https://github.com/${repo.full_name}`,
     parent: process.env.DEFAULT_CATEGORY_ID || "",
   });
-  await createWH(repoName, chan);
+  await createWH(repo, chan);
 };
 
-export const deleteChannel = async (repoName: string): Promise<void> => {
+export const deleteChannel = async ({
+  name,
+  full_name,
+}: Repository): Promise<void> => {
   const chan = guild()?.channels.cache.find(
-    (c) => c.name === `🤖${repoName.toLowerCase().split("/")[1]}`
+    (c) => c.name === `🤖${name.toLowerCase()}`
   ) as TextChannel;
-  await chan?.send(`<https://github.com/${repoName}> a été supprimé !`);
+  await chan?.send(`<https://github.com/${full_name}> a été supprimé !`);
   await chan?.delete();
 };
 
 export const renameChannel = async (
   from: string,
-  to: string
+  to: { full_name: string; name: string }
 ): Promise<void> => {
   const chan = guild()?.channels.cache.find(
     (c) => c.name === `🤖${from.toLowerCase()}`
   ) as TextChannel;
   await chan?.send(
-    `<${chan?.topic}> a été renommé en <https://github.com/${to}> !`
+    `<${chan?.topic}> a été renommé en <https://github.com/${to.full_name}> !`
   );
-  await chan?.setTopic(`https://github.com/${to}`);
-  await chan?.setName(`🤖${to.split("/")[1]}`);
+  await chan?.setTopic(`https://github.com/${to.full_name}`);
+  await chan?.setName(`🤖${to.name}`);
 };
