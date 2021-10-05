@@ -106,8 +106,12 @@ export const notifyNewPackage = async ({
     description: `Le package [${registry_package.name}:${registry_package.package_version.container_metadata.tag.name}](${registry_package.package_version.html_url}) est disponible.\nConfiguration nécéssaire sur le VPS pour un déploiement automatique.`,
     fields: [
       {
-        name: "Commande docker",
+        name: "Commande docker (create)",
         value: `\`docker service create --name ${repository.name} --publish 808x:80 ${registry_package.package_version.package_url}\``,
+      },
+      {
+        name: "Commande docker (update)",
+        value: `\`docker service update --image ${registry_package.package_version.package_url} ${repository.name}\``,
       },
       {
         name: "Commande Apache",
