@@ -87,6 +87,12 @@ export const notifyNewPackage = async ({
   registry_package,
   repository,
 }: any): Promise<void> => {
+  if (
+    registry_package.package_version.container_metadata.tag.name === "latest"
+  ) {
+    return;
+  }
+
   const chan = guild()?.channels.cache.find(
     (c) => c.name === `🤖${repository.name.toLowerCase()}`
   ) as TextChannel;
