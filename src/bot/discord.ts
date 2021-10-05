@@ -11,7 +11,7 @@ client.on("debug", (e) => Logger.get("Discord").debug(e));
 export const createEmbed = (data?: MessageEmbedOptions): MessageEmbed =>
   new MessageEmbed({
     footer: {
-      text: "provided by @pommebot#2756",
+      text: "by @OxyTom#1831",
       iconURL:
         "https://cdn.discordapp.com/avatars/845027189552054302/3244763092c20218c6c74adfa854a841.png?size=4096",
     },

@@ -15,8 +15,7 @@ client.on("ready", function () {
     Logger.get("Discord").info(`Connected as ${client.user.tag}`);
     client.user.setActivity("some GitHub events", { type: "WATCHING" });
 
-    // seekingRepos();
-    // setInterval(seekingRepos, 5 * 60 * 1000);
+    // testMessage();
   }
 });
 

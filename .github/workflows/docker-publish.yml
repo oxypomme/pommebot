@@ -26,6 +26,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - run: printf "${{ secrets.ENV_FILE }}" > ./.env
+
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
       - name: Log into registry ${{ env.REGISTRY }}

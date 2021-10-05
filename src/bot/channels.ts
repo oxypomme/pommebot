@@ -1,4 +1,8 @@
-import { PackagePublishedEvent, Repository } from "@octokit/webhooks-types";
+import {
+  PackagePublishedEvent,
+  Repository,
+  User,
+} from "@octokit/webhooks-types";
 import { TextChannel } from "discord.js";
 import Logger from "js-logger";
 import { createWH as ghCreateWH } from "../github/webhooks";
@@ -22,7 +26,7 @@ export const createWH = async (
           iconURL:
             "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
         },
-        description: `Création d'un webhook connecté à <https://github.com/${repo.full_name}>`,
+        description: `Création d'un webhook connecté à [${repo.full_name}](https://github.com/${repo.full_name})`,
         fields: [{ name: "Events", value: events.join(", ") }],
         timestamp: new Date(repo.created_at),
       });
@@ -56,7 +60,7 @@ export const deleteChannel = async ({
       iconURL:
         "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
     },
-    description: `<https://github.com/${full_name}> a été supprimé`,
+    description: `[${full_name}](https://github.com/${full_name}) a été supprimé`,
   });
   await chan?.send({ embeds: [embed] });
   await chan?.delete();
@@ -64,7 +68,7 @@ export const deleteChannel = async ({
 
 export const renameChannel = async (
   from: string,
-  to: { full_name: string; name: string }
+  to: { full_name: string; name: string; owner: User }
 ): Promise<void> => {
   const chan = guild()?.channels.cache.find(
     (c) => c.name === `🤖${from.toLowerCase()}`
@@ -76,7 +80,7 @@ export const renameChannel = async (
       iconURL:
         "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
     },
-    description: `<${chan?.topic}> a été renommé en <https://github.com/${to.full_name}>`,
+    description: `[${to.owner.name}/${from}](${chan?.topic}) a été renommé en [${to.full_name}](https://github.com/${to.full_name})>`,
   });
   await chan?.send({ embeds: [embed] });
   await chan?.setTopic(`https://github.com/${to.full_name}`);
@@ -138,6 +142,47 @@ export const notifyPackageUpdate = async ({
     },
     description: `Une nouvelle version package _${pckg.name}_ (${pckg.package_type}) est disponible [pour ${repository.full_name}](${pckg.html_url}).\nConfiguration nécéssaire sur le VPS pour un déploiement automatique.`,
     timestamp: new Date(pckg.updated_at),
+  });
+  await chan?.send({ embeds: [embed] });
+};
+
+export const testMessage = async (): Promise<void> => {
+  const chan = guild()?.channels.cache.find(
+    (c) => c.name === "bot"
+  ) as TextChannel;
+  Logger.get("Discord").debug("Test message sent");
+
+  const repository = {
+    full_name: "oxypomme/pommebot",
+    name: "pommebot",
+  };
+  const embed = createEmbed({
+    title: "Test embed",
+    author: {
+      name: "OxyTom",
+      iconURL: "https://avatars.githubusercontent.com/u/34627360?v=4",
+    },
+    description: `Simple test d'init\nAvec retour`,
+    fields: [
+      {
+        name: "Commande docker",
+        value: `\`docker service create --name ${chan?.name} --publish 808x:80 ghcr.io/${repository.full_name}:main\``,
+      },
+      {
+        name: "Commande Apache",
+        value: "`sudo nano +35 /etc/apache2/sites-available/000-default.conf`",
+      },
+      {
+        name: "Config Apache",
+        value: `\`\`\`conf
+# ${repository.name}
+RewriteCond %{HTTP_REFERER} ^https?:\\/\\/.*\\/${repository.name} [NC]
+RewriteRule "^\\/(?!${repository.name})(.+)$" "/${repository.name}/$1" [P,NC]
+ProxyPass /${repository.name} "http://127.0.0.1:808x"
+        \`\`\``,
+      },
+    ],
+    timestamp: new Date(),
   });
   await chan?.send({ embeds: [embed] });
 };

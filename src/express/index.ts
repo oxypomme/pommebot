@@ -22,9 +22,9 @@ app.use(
 
 app.use(express.static(__dirname + "/public"));
 
-// GHApp.webhooks.onAny(({ id, name, payload }) => {
-//   console.log(`Getting ${name}`);
-// });
+GHApp.webhooks.onAny(({ id, name, payload }) => {
+  Logger.get("Express").info(`Getting ${name} from GitHub`);
+});
 
 GHApp.webhooks.on("repository.created", async ({ payload }) => {
   await createChannel(payload.repository);
@@ -42,7 +42,6 @@ GHApp.webhooks.on("repository.archived", async ({ payload }) => {
 GHApp.webhooks.on("repository.unarchived", async ({ payload }) => {
   await createChannel(payload.repository);
 });
-
 GHApp.webhooks.on("package.published", async ({ payload }) => {
   await notifyNewPackage(payload);
 });
