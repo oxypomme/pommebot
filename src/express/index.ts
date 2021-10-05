@@ -1,7 +1,12 @@
 import { createNodeMiddleware } from "@octokit/app";
 import express from "express";
 import Logger from "js-logger";
-import { createChannel, deleteChannel, renameChannel } from "../bot/channels";
+import {
+  createChannel,
+  deleteChannel,
+  notifyNewPackage,
+  renameChannel,
+} from "../bot/channels";
 import GHApp from "../github";
 import { removeWH } from "../github/webhooks";
 import { NodeColors } from "../NodeColors";
@@ -17,9 +22,9 @@ app.use(
 
 app.use(express.static(__dirname + "/public"));
 
-GHApp.webhooks.onAny(({ id, name, payload }) => {
-  console.log(`Getting ${name}`);
-});
+// GHApp.webhooks.onAny(({ id, name, payload }) => {
+//   console.log(`Getting ${name}`);
+// });
 
 GHApp.webhooks.on("repository.created", async ({ payload }) => {
   await createChannel(payload.repository);
@@ -36,6 +41,13 @@ GHApp.webhooks.on("repository.archived", async ({ payload }) => {
 });
 GHApp.webhooks.on("repository.unarchived", async ({ payload }) => {
   await createChannel(payload.repository);
+});
+
+GHApp.webhooks.on("package.published", async ({ payload }) => {
+  await notifyNewPackage(payload);
+});
+GHApp.webhooks.on("package.updated", async ({ payload }) => {
+  // TODO
 });
 
 app.listen(process.env.HTTP_PORT, () => {

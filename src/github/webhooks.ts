@@ -1,21 +1,29 @@
-import GHApp from ".";
 import { Repository } from "@octokit/webhooks-types";
-
 import { Webhook } from "discord.js";
+import GHApp from ".";
 
 export const createWH = async (
   { name, full_name, owner }: Repository,
   { url }: Webhook
-): Promise<void> => {
+): Promise<string[]> => {
+  const events = [
+    "push",
+    "issues",
+    "pull_request",
+    "check_run",
+    "fork",
+    "create",
+  ];
   await GHApp.octokit.request("POST /repos/{owner}/{repo}/hooks", {
     owner: owner.name || full_name.split("/")[0],
     repo: name,
-    events: ["push", "issues", "pull_request", "check_run", "fork", "create"],
+    events,
     config: {
       content_type: "json",
       url: `${url}/github`,
     },
   });
+  return events;
 };
 
 export const removeWH = async ({
