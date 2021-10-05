@@ -162,7 +162,7 @@ export const testMessage = async (): Promise<void> => {
       name: "OxyTom",
       iconURL: "https://avatars.githubusercontent.com/u/34627360?v=4",
     },
-    description: `Simple test d'init\nAvec retour`,
+    description: `Simple test d'init\nAvec retour et [MD Links](https://github.com/settings/apps/pommebot)`,
     fields: [
       {
         name: "Commande docker",
@@ -179,7 +179,7 @@ export const testMessage = async (): Promise<void> => {
 RewriteCond %{HTTP_REFERER} ^https?:\\/\\/.*\\/${repository.name} [NC]
 RewriteRule "^\\/(?!${repository.name})(.+)$" "/${repository.name}/$1" [P,NC]
 ProxyPass /${repository.name} "http://127.0.0.1:808x"
-        \`\`\``,
+\`\`\``,
       },
     ],
     timestamp: new Date(),

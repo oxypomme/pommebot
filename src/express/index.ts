@@ -45,9 +45,6 @@ GHApp.webhooks.on("repository.unarchived", async ({ payload }) => {
 GHApp.webhooks.on("package.published", async ({ payload }) => {
   await notifyNewPackage(payload);
 });
-GHApp.webhooks.on("package.updated", async ({ payload }) => {
-  // TODO
-});
 
 app.listen(process.env.HTTP_PORT, () => {
   Logger.get("Express").info(
