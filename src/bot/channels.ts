@@ -1,8 +1,4 @@
-import {
-  PackagePublishedEvent,
-  Repository,
-  User,
-} from "@octokit/webhooks-types";
+import { Repository, User } from "@octokit/webhooks-types";
 import { TextChannel } from "discord.js";
 import Logger from "js-logger";
 import { createWH as ghCreateWH } from "../github/webhooks";
@@ -88,24 +84,24 @@ export const renameChannel = async (
 };
 
 export const notifyNewPackage = async ({
-  package: pckg,
+  registry_package,
   repository,
-}: PackagePublishedEvent): Promise<void> => {
+}: any): Promise<void> => {
   const chan = guild()?.channels.cache.find(
     (c) => c.name === `🤖${repository.name.toLowerCase()}`
   ) as TextChannel;
   const embed = createEmbed({
-    title: "Repository renommé",
+    title: "Package Disponible",
     author: {
       name: "GitHub",
       iconURL:
         "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
     },
-    description: `Le package _${pckg.name}_ (${pckg.package_type}) est disponible [pour ${repository.full_name}](https://github.com/${repository.owner.name}?tab=packages&repo_name=${repository.name}).\nConfiguration nécéssaire sur le VPS pour un déploiement automatique.`,
+    description: `Le package [${registry_package.name}:${registry_package.package_version.container_metadata.tag.name}](${registry_package.package_version.html_url}) est disponible.\nConfiguration nécéssaire sur le VPS pour un déploiement automatique.`,
     fields: [
       {
         name: "Commande docker",
-        value: `\`docker service create --name ${chan?.name} --publish 808x:80 ghcr.io/${repository.full_name}:main\``,
+        value: `\`docker service create --name ${repository.name} --publish 808x:80 ${registry_package.package_version.package_url}\``,
       },
       {
         name: "Commande Apache",
@@ -114,34 +110,14 @@ export const notifyNewPackage = async ({
       {
         name: "Config Apache",
         value: `\`\`\`conf
-        # ${repository.name}
-        RewriteCond %{HTTP_REFERER} ^https?:\\/\\/.*\\/${repository.name} [NC]
-        RewriteRule "^\\/(?!${repository.name})(.+)$" "/${repository.name}/$1" [P,NC]
-        ProxyPass /${repository.name} "http://127.0.0.1:808y"
+# ${repository.name}
+RewriteCond %{HTTP_REFERER} ^https?:\\/\\/.*\\/${repository.name} [NC]
+RewriteRule "^\\/(?!${repository.name})(.+)$" "/${repository.name}/$1" [P,NC]
+ProxyPass /${repository.name} "http://127.0.0.1:808x"
         \`\`\``,
       },
     ],
-    timestamp: new Date(pckg.created_at),
-  });
-  await chan?.send({ embeds: [embed] });
-};
-
-export const notifyPackageUpdate = async ({
-  package: pckg,
-  repository,
-}: PackagePublishedEvent): Promise<void> => {
-  const chan = guild()?.channels.cache.find(
-    (c) => c.name === `🤖${repository.name.toLowerCase()}`
-  ) as TextChannel;
-  const embed = createEmbed({
-    title: "Repository renommé",
-    author: {
-      name: "GitHub",
-      iconURL:
-        "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
-    },
-    description: `Une nouvelle version package _${pckg.name}_ (${pckg.package_type}) est disponible [pour ${repository.full_name}](${pckg.html_url}).\nConfiguration nécéssaire sur le VPS pour un déploiement automatique.`,
-    timestamp: new Date(pckg.updated_at),
+    timestamp: new Date(registry_package.created_at),
   });
   await chan?.send({ embeds: [embed] });
 };
