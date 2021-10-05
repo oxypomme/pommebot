@@ -24,6 +24,7 @@ export const createWH = async (
         },
         description: `Création d'un webhook connecté à <https://github.com/${repo.full_name}>`,
         fields: [{ name: "Events", value: events.join(", ") }],
+        timestamp: new Date(repo.created_at),
       });
       await chan?.send({ embeds: [embed] });
     }
@@ -116,6 +117,7 @@ export const notifyNewPackage = async ({
         \`\`\``,
       },
     ],
+    timestamp: new Date(pckg.created_at),
   });
   await chan?.send({ embeds: [embed] });
 };
@@ -134,7 +136,8 @@ export const notifyPackageUpdate = async ({
       iconURL:
         "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
     },
-    description: `Une nouvelle version package _${pckg.name}_ (${pckg.package_type}) est disponible [pour ${repository.full_name}](https://github.com/${repository.owner.name}?tab=packages&repo_name=${repository.name}).\nConfiguration nécéssaire sur le VPS pour un déploiement automatique.`,
+    description: `Une nouvelle version package _${pckg.name}_ (${pckg.package_type}) est disponible [pour ${repository.full_name}](${pckg.html_url}).\nConfiguration nécéssaire sur le VPS pour un déploiement automatique.`,
+    timestamp: new Date(pckg.updated_at),
   });
   await chan?.send({ embeds: [embed] });
 };
