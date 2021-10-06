@@ -1,5 +1,8 @@
 node_modules/
-.vscode/
+.vscode/*
+!.vscode/settings.json
 .env
 yarn-error.log
 keys/
+src/modules/*
+!src/modules/*.d.ts
