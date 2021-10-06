@@ -38,3 +38,5 @@ client.on("interactionCreate", async (interaction) => {
     }
   }
 });
+
+export default client;

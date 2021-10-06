@@ -1,7 +1,7 @@
 import { readdir } from "fs/promises";
 import "./.env";
 import "./bot";
-import "./express";
+import app from "./express";
 import { IModule } from "./modules/.types";
 
 (async () => {
@@ -14,3 +14,5 @@ import { IModule } from "./modules/.types";
     (require("./modules/" + module) as IModule).start();
   }
 })();
+
+export { app };

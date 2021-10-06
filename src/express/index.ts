@@ -53,3 +53,5 @@ app.listen(process.env.HTTP_PORT, () => {
     `Web app listening at ${NodeColors.Underscore}http://localhost:${process.env.HTTP_PORT}${NodeColors.Reset}`
   );
 });
+
+export default app;
