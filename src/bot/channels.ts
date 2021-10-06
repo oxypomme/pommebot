@@ -1,4 +1,4 @@
-import { Repository, User } from "@octokit/webhooks-types";
+import { Repository } from "@octokit/webhooks-types";
 import { TextChannel } from "discord.js";
 import Logger from "js-logger";
 import { createWH as ghCreateWH } from "../github/webhooks";
@@ -64,11 +64,12 @@ export const deleteChannel = async ({
 
 export const renameChannel = async (
   from: string,
-  to: { full_name: string; name: string; owner: User }
+  to: { full_name: string; name: string }
 ): Promise<void> => {
   const chan = guild()?.channels.cache.find(
     (c) => c.name === `🤖${from.toLowerCase()}`
   ) as TextChannel;
+  const owner = chan?.topic?.split("/").reverse()[1];
   const embed = createEmbed({
     title: "Repository renommé",
     author: {
@@ -76,7 +77,7 @@ export const renameChannel = async (
       iconURL:
         "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
     },
-    description: `[${to.owner.name}/${from}](${chan?.topic}) a été renommé en [${to.full_name}](https://github.com/${to.full_name})>`,
+    description: `[${owner}}/${from}](${chan?.topic}) a été renommé en [${to.full_name}](https://github.com/${to.full_name})`,
   });
   await chan?.send({ embeds: [embed] });
   await chan?.setTopic(`https://github.com/${to.full_name}`);
