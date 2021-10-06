@@ -1,0 +1,4 @@
+{
+  "debug.javascript.autoAttachFilter": "smart",
+  "conventionalCommits.scopes": ["modules"]
+}

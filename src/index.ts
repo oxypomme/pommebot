@@ -1,8 +1,8 @@
+import { readdir } from "fs/promises";
 import "./.env";
 import "./bot";
 import "./express";
-import { readdir } from "fs/promises";
-import { IModule } from "./modules/.modules";
+import { IModule } from "./modules/.types";
 
 (async () => {
   const modules = await (
@@ -10,6 +10,7 @@ import { IModule } from "./modules/.modules";
   ).filter((d) => d[0] !== ".");
 
   for (const module of modules) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     (require("./modules/" + module) as IModule).start();
   }
 })();
