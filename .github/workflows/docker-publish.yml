@@ -40,8 +40,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # # Extract metadata (tags, labels) for Docker
-      # # https://github.com/docker/metadata-action
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
@@ -50,6 +50,9 @@ jobs:
           tags: |
             ${{ steps.tag_version.outputs.new_tag }}
             latest
+
+      - name: Put environement data
+        run: printf "${{ secrets.ENV_FILE }}" > ./.env
 
       # Build and push Docker image with Buildx
       # https://github.com/docker/build-push-action
