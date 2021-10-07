@@ -4,5 +4,3 @@ node_modules/
 .env
 yarn-error.log
 keys/
-src/modules/*
-!src/modules/*.d.ts

@@ -1,13 +1,13 @@
 import { readdir } from "fs/promises";
 import "./.env";
-import "./bot";
+import client from "./bot";
 import app from "./express";
 import { IModule } from "./modules/.types";
 
 (async () => {
-  const modules = await (
-    await readdir(__dirname + "/modules")
-  ).filter((d) => d[0] !== ".");
+  const modules = (await readdir(__dirname + "/modules")).filter(
+    (d) => d[0] !== "."
+  );
 
   for (const module of modules) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -15,4 +15,4 @@ import { IModule } from "./modules/.types";
   }
 })();
 
-export { app };
+export { app, client };
