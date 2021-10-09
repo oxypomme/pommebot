@@ -1,5 +1,5 @@
 import Logger from "js-logger";
-import commands from "./commands";
+import { execCommand } from "./commands";
 import client from "./discord";
 
 /*TODO: Orga - Webhook
@@ -22,21 +22,7 @@ client.on("ready", function () {
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
 
-  const command = commands.find((c) => c.name === interaction.commandName);
-  if (command) {
-    try {
-      const subcommand = command.options?.find(
-        (c) => c.type === 1 && c.name === interaction.options.getSubcommand()
-      );
-      if (subcommand.action) {
-        subcommand.action(interaction);
-      }
-    } catch (error) {
-      if (command.action) {
-        command.action(interaction);
-      }
-    }
-  }
+  await execCommand(interaction);
 });
 
 export default client;

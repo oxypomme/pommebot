@@ -8,6 +8,11 @@
     "start:prod": "ts-node --transpile-only src/index.ts",
     "dev": "nodemon"
   },
+  "nodemonConfig": {
+    "ignore": [
+      "config/*"
+    ]
+  },
   "repository": "https://github.com/oxypomme/pommebot.git",
   "author": "OxyTom <oxytom8@gmail.com>",
   "license": "MIT",
