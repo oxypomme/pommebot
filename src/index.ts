@@ -1,6 +1,7 @@
 import { readdir } from "fs/promises";
 import "./.env";
 import client from "./bot";
+import config from "./config";
 import app from "./express";
 import { IModule } from "./modules/.types";
 
@@ -15,4 +16,4 @@ import { IModule } from "./modules/.types";
   }
 })();
 
-export { app, client };
+export { app, client, config };
