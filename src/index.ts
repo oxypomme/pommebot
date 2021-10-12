@@ -12,8 +12,9 @@ import { IModule } from "./modules/.types";
   );
 
   for (const module of modules) {
+    ((await import("./modules/" + module)) as IModule).start();
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    (require("./modules/" + module) as IModule).start();
+    // (require("./modules/" + module) as IModule).start();
   }
 
   reloadCommands();

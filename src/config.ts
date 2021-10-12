@@ -17,11 +17,15 @@ let config: IConfig = {
   },
 };
 
-try {
-  config = { ...config, ...require(path) };
-} catch (error) {
-  closeSync(openSync(path, "w"));
-  config = { ...config, ...require(path) };
-}
+(async () => {
+  let fileConf = {};
+  try {
+    fileConf = await import(path);
+  } catch (error) {
+    closeSync(openSync(path, "w"));
+    fileConf = await import(path);
+  }
+  config = { ...config, ...fileConf };
+})();
 
 export default config;
