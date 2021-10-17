@@ -1,4 +1,4 @@
 export interface IModule {
-  start: () => void;
-  stop: () => void;
+  start: () => boolean | Promise<boolean>;
+  stop: () => boolean | Promise<boolean>;
 }
