@@ -1,0 +1,36 @@
+<main class="timegrid_container">
+  <div class="timegrid">
+    {{#each data.hours}}
+      <div class="timegrid_c1">{{this}}h</div>
+    {{/each}}
+
+    <div class="timegrid_rs1"></div>
+    {{#each data.days}}
+      <div class="timegrid_rs1">{{this}}</div>
+    {{/each}}
+
+    {{#each data.timetable}}
+      <div
+        class="timegrid_event {{this.classnames}}"
+        style="background: {{this.course.color}};"
+      >
+        <div class="timegrid_event_time">
+          {{this.startTime}}
+          -
+          {{this.endTime}}
+        </div>
+        <div class="timegrid_event_label">{{this.course.label}}</div>
+        <ul class="timegrid_event_rooms">
+          {{#each this.rooms}}
+            <li>{{this.label}}</li>
+          {{/each}}
+        </ul>
+        <ul class="timegrid_event_teachers">
+          {{#each this.teachers}}
+            <li>{{this.name}}</li>
+          {{/each}}
+        </ul>
+      </div>
+    {{/each}}
+  </div>
+</main>

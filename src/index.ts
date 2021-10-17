@@ -12,6 +12,7 @@ import { IModule } from "./modules/.types";
     (d) => d[0] !== "."
   );
 
+  Logger.get("Modules").info("Detected modules", modules);
   for (const module of modules) {
     if (((await import("./modules/" + module)) as IModule).start()) {
       Logger.get("Modules").info(module, "started");
