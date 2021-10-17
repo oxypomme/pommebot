@@ -19,6 +19,7 @@
   "dependencies": {
     "@discordjs/rest": "^0.1.0-canary.0",
     "@octokit/app": "^12.0.5",
+    "@octokit/auth-app": "^3.6.1",
     "@octokit/core": "^3.4.0",
     "discord-api-types": "^0.23.1",
     "discord.js": "^13.1.0",
