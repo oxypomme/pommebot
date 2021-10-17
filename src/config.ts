@@ -1,10 +1,11 @@
-import { closeSync, openSync, writeFileSync } from "fs";
+import { mkdirSync, writeFileSync } from "fs";
+import { dirname, resolve } from "path";
 
 interface IConfig {
   add: (obj: Partial<IConfig>) => IConfig;
   [key: string]: any;
 }
-const path = __dirname + "/../config/index.json";
+const path = resolve(__dirname, "/../config/index.json");
 
 let config: IConfig = {
   add: (obj): IConfig => {
@@ -22,10 +23,11 @@ let config: IConfig = {
   try {
     fileConf = await import(path);
   } catch (error) {
-    closeSync(openSync(path, "w"));
-    fileConf = await import(path);
+    mkdirSync(dirname(path), {
+      recursive: true,
+    });
   }
-  config = { ...config, ...fileConf };
+  config.add(fileConf);
 })();
 
 export default config;
