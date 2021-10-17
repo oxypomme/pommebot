@@ -3,9 +3,10 @@ import { createAppAuth } from "@octokit/auth-app";
 import { AuthInterface } from "@octokit/auth-app/dist-types/types";
 import { readFileSync } from "fs";
 import Logger from "js-logger";
+import { join } from "path";
 
 const privateKey = readFileSync(
-  __dirname + "/../../keys/github.private-key.pem",
+  join(__dirname, "/../../keys/github.private-key.pem"),
   "utf-8"
 );
 

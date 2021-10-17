@@ -1,11 +1,11 @@
 import { mkdirSync, writeFileSync } from "fs";
-import { dirname, resolve } from "path";
+import { dirname, join } from "path";
 
 interface IConfig {
   add: (obj: Partial<IConfig>) => IConfig;
   [key: string]: any;
 }
-const path = resolve(__dirname, "/../config/index.json");
+const path = join(__dirname, "/../config/index.json");
 
 let config: IConfig = {
   add: (obj): IConfig => {
