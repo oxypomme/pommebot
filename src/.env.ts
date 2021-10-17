@@ -11,11 +11,9 @@ Logger.useDefaults({
     switch (context.level.name) {
       case "INFO":
         color = NodeColors.FgBlue;
-        context.level.name += " ";
         break;
       case "WARN":
         color = NodeColors.FgYellow;
-        context.level.name += " ";
         break;
       case "ERROR":
         color = NodeColors.FgRed;
@@ -28,8 +26,10 @@ Logger.useDefaults({
       color,
       new Date().toISOString(),
       NodeColors.Bright + context.name + NodeColors.Reset + color,
-      `${NodeColors.Reverse} ` + context.level.name + ` ${NodeColors.Reset}`,
-      color
+      `${NodeColors.Reverse} ` +
+        context.level.name +
+        ` ${NodeColors.Reset}` +
+        color
     );
   },
 });
