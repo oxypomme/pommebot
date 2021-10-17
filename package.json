@@ -6,6 +6,7 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "start:prod": "ts-node --transpile-only src/index.ts",
+    "build:ul": "sass src\\modules\\module-UL\\src\\express\\scss\\style.scss:src\\modules\\module-UL\\dist\\css\\style.css",
     "dev": "nodemon"
   },
   "nodemonConfig": {
