@@ -1,0 +1,73 @@
+@use "sass:math";
+
+$nb-days: 7;
+$nb-hours: 12;
+$gap: 0.25;
+
+.timegrid_container {
+  background-color: #36393f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.timegrid {
+  display: grid;
+  grid-template-columns: repeat(
+    $nb-days,
+    math.div(99vw - ($nb-days * 0.25vw), $nb-days)
+  );
+  grid-template-rows: repeat(
+    $nb-hours - 1,
+    math.div(99vh - ($nb-hours * 0.25vh), $nb-hours - 1)
+  );
+
+  gap: #{$gap}vh #{$gap}vw;
+  text-align: center;
+
+  color: white;
+  > div {
+    background: #202225;
+  }
+}
+
+.timegrid_event {
+  color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 0.25rem;
+
+  > div {
+    overflow: hidden;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+@for $i from 1 to $nb-days + 1 {
+  .timegrid_c#{$i} {
+    grid-column: $i;
+  }
+}
+
+@for $i from 1 to $nb-hours + 1 {
+  .timegrid_rs#{$i} {
+    grid-row-start: $i;
+  }
+  .timegrid_re#{$i} {
+    grid-row-end: $i;
+  }
+}
+.timegrid_rs1,
+.timegrid_c1 {
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
