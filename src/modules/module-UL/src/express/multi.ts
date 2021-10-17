@@ -103,9 +103,9 @@ export const generateEDT = async (login: string): Promise<Buffer> => {
 
   let html =
     "<style>" +
-    (await readFile(__dirname + "/../../dist/css/style.css")).toString() +
+    (await readFile(join(__dirname, "/../../dist/css/style.css"))).toString() +
     "</style>";
-  html += (await readFile(__dirname + "/edt.handlebars")).toString();
+  html += (await readFile(join(__dirname, "/edt.handlebars"))).toString();
 
   const file = join(basepath, login, `/${hash(data)}.jpg`);
   let image: Buffer | undefined = undefined;
