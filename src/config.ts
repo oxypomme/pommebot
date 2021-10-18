@@ -1,5 +1,5 @@
-import { mkdirSync, writeFileSync } from "fs";
-import { dirname, join } from "path";
+import { writeFileSync } from "fs";
+import { join } from "path";
 
 interface IConfig {
   add: (obj: Partial<IConfig>) => IConfig;
@@ -23,9 +23,10 @@ let config: IConfig = {
   try {
     fileConf = await import(path);
   } catch (error) {
-    mkdirSync(dirname(path), {
-      recursive: true,
-    });
+    // mkdirSync(dirname(path), {
+    //   recursive: true,
+    // });
+    writeFileSync(path, JSON.stringify({}));
   }
   config.add(fileConf);
 })();
