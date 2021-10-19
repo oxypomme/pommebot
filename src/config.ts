@@ -30,4 +30,4 @@ let config: IConfig = {
   config.add(fileConf);
 })();
 
-export default config;
+export default () => config;

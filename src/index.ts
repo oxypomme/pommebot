@@ -3,7 +3,7 @@ import Logger from "js-logger";
 import "./.env";
 import client from "./bot";
 import { reloadCommands } from "./bot/commands";
-import config from "./config";
+import getConfig from "./config";
 import app from "./express";
 import { IModule } from "./modules/.types";
 
@@ -22,4 +22,4 @@ import { IModule } from "./modules/.types";
   reloadCommands();
 })();
 
-export { app, client, config };
+export { app, client, getConfig };

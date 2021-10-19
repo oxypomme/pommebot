@@ -1,13 +1,15 @@
 import { CommandInteraction } from "discord.js";
 import Logger from "js-logger";
 import { addCommand } from "../../bot/commands";
-import config from "../../config";
+import getConfig from "../../config";
 import { clearCache, generateEDT } from "./src/express/multi";
 
 let timer: NodeJS.Timer;
 
 const timerFnc = () => {
+  Logger.get("module-UL").info("Checking EDTs");
   try {
+    const config = getConfig();
     if (config.ul && config.ul.logins) {
       for (const login of config.ul.logins) {
         generateEDT(login);
@@ -27,6 +29,7 @@ export const start = async (): Promise<boolean> => {
   // Start express
   import("./src/express");
 
+  timerFnc();
   timer = setInterval(() => timerFnc(), 60 * 60 * 1000);
 
   addCommand([
@@ -40,6 +43,7 @@ export const start = async (): Promise<boolean> => {
           type: 1,
           action: async (interaction: CommandInteraction): Promise<void> => {
             const login = interaction.options.getString("login");
+            const config = getConfig();
             config.add({
               ul: {
                 ...config.ul,
