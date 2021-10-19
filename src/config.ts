@@ -13,7 +13,7 @@ let config: IConfig = {
       ...config,
       ...obj,
     };
-    writeFileSync(path, JSON.stringify(config));
+    writeFileSync(path, JSON.stringify({ ...config, default: undefined }));
     return config;
   },
 };

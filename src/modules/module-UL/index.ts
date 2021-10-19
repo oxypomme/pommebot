@@ -1,13 +1,25 @@
 import { CommandInteraction } from "discord.js";
+import Logger from "js-logger";
 import { addCommand } from "../../bot/commands";
 import config from "../../config";
-import { clearCache } from "./src/express/multi";
+import { clearCache, generateEDT } from "./src/express/multi";
 
 let timer: NodeJS.Timer;
 
-const timerFnc = (generateEDT) => {
-  for (const login of config.ul?.logins) {
-    generateEDT(login);
+const timerFnc = () => {
+  try {
+    if (config.ul && config.ul.logins) {
+      for (const login of config.ul.logins) {
+        generateEDT(login);
+      }
+    } else {
+      Logger.get("module-UL").error(
+        "config.ul or config.ul.logins is undefined",
+        config
+      );
+    }
+  } catch (error) {
+    Logger.get("module-UL").error(error);
   }
 };
 
@@ -15,8 +27,7 @@ export const start = async (): Promise<boolean> => {
   // Start express
   import("./src/express");
 
-  const { generateEDT } = await import("./src/express/multi");
-  timer = setInterval(() => timerFnc(generateEDT), 60 * 60 * 1000);
+  timer = setInterval(() => timerFnc(), 60 * 60 * 1000);
 
   addCommand([
     {
@@ -58,7 +69,7 @@ export const start = async (): Promise<boolean> => {
           type: 1,
           action: async (interaction: CommandInteraction): Promise<void> => {
             await clearCache();
-            timerFnc(generateEDT);
+            timerFnc();
             interaction.reply({
               content: "Timetables reloaded",
               ephemeral: true,
