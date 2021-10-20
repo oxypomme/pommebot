@@ -1,4 +1,4 @@
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, TextChannel } from "discord.js";
 import { Command } from "./types";
 
 const commands: Command[] = [
@@ -16,12 +16,9 @@ const commands: Command[] = [
     name: "clear",
     description: "Clear all messages",
     action: async (interaction: CommandInteraction): Promise<void> => {
-      const messages = await interaction.channel?.messages.fetch();
-      if (messages) {
-        for (const [, mess] of messages) {
-          mess.delete();
-        }
-      }
+      // TODO: testing needed
+      const chan = interaction.channel as TextChannel;
+      await chan.bulkDelete(chan.messages.cache);
       interaction.reply({
         content: "Channel is now cleaned",
         ephemeral: true,

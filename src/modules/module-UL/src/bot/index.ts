@@ -1,5 +1,5 @@
 import { Dayjs } from "dayjs";
-import { TextChannel } from "discord.js";
+import { CategoryChannel, TextChannel } from "discord.js";
 import { client } from "../../../..";
 import { createEmbed } from "../../../../bot/discord";
 
@@ -11,10 +11,17 @@ export const sendTimetable = async (
   startDate: Dayjs,
   endDate: Dayjs
 ): Promise<void> => {
-  // TODO: delete old message from same login
-  const chan = guild()?.channels.cache.find(
+  const categ = guild()?.channels.cache.find(
     (c) => c.name === "edts"
+  ) as CategoryChannel;
+
+  const chan = categ.children.find(
+    (c) => c.name === login && c instanceof TextChannel
   ) as TextChannel;
+  // Delete previous messages
+  // TODO: testing needed
+  await chan.bulkDelete(chan.messages.cache);
+  // Send EDT
   const embed = createEmbed({
     title: `${login} - EDT`,
     author: {
