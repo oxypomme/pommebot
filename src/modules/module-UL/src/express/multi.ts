@@ -12,7 +12,7 @@ import { GraphQLResult, ParsedEvent, ParsedTimetable } from "./types";
 dayjs.extend(utc);
 dayjs.locale("fr");
 
-const basepath = join(__dirname, "/../../cache/edts/");
+export const basepath = join(__dirname, "/../../cache/edts/");
 
 export const fetchEDT = async (
   login: string,
@@ -94,7 +94,7 @@ export const fetchEDT = async (
   } as ParsedTimetable;
 };
 
-export const generateEDT = async (login: string): Promise<Buffer> => {
+export const generateEDT = async (login: string): Promise<string> => {
   const data = await fetchEDT(login, true);
 
   if ((data as GraphQLResult).errors) {
@@ -107,16 +107,19 @@ export const generateEDT = async (login: string): Promise<Buffer> => {
     "</style>";
   html += (await readFile(join(__dirname, "/edt.handlebars"))).toString();
 
-  const file = join(basepath, login, `/${hash(data)}.jpg`);
-  let image: Buffer | undefined = undefined;
+  const filename = hash(data);
+  const file = join(basepath, login, `/${filename}.jpg`);
 
   try {
-    image = await readFile(file);
+    // Trying to read the file
+    await readFile(file);
   } catch (error) {
+    // Ensuring that dir exists
     await mkdir(dirname(file), {
       recursive: true,
     });
-    image = (await nodeHtmlToImage({
+    // Generate image
+    (await nodeHtmlToImage({
       output: file,
       html,
       content: { data },
@@ -138,14 +141,15 @@ export const generateEDT = async (login: string): Promise<Buffer> => {
     })) as Buffer;
 
     // TODO: Dirty
-    sendTimetable(
-      login,
-      `https://oxypomme.fr/pommebot/edt/${login}`,
-      (data as ParsedTimetable).startDate,
-      (data as ParsedTimetable).endDate
-    );
+    if (!filename)
+      sendTimetable(
+        login,
+        `https://oxypomme.fr/pommebot/edt/${login}/${filename}`,
+        (data as ParsedTimetable).startDate,
+        (data as ParsedTimetable).endDate
+      );
   }
-  return image;
+  return filename;
 };
 
 export const clearCache = async (): Promise<void> =>

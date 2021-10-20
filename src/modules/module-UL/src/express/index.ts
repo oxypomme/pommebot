@@ -1,14 +1,16 @@
+import { readFile } from "fs/promises";
 import Logger from "js-logger";
+import { join } from "path";
 import { app } from "../../../../";
-import { fetchEDT, generateEDT } from "./multi";
+import { basepath, fetchEDT, generateEDT } from "./multi";
 import { GraphQLResult } from "./types";
 
 app.get("/edt/:login", async (req, res) => {
   const { login } = req.params;
 
-  let image: any;
+  let file: string;
   try {
-    image = await generateEDT(login);
+    file = await generateEDT(login);
   } catch (th) {
     const data = th as GraphQLResult;
 
@@ -21,14 +23,25 @@ app.get("/edt/:login", async (req, res) => {
     return;
   }
 
-  res.writeHead(200, {
-    "Content-Type": "image/png",
-    "Content-Disposition": `inline; filename="${login}_${new Date().toLocaleDateString()}.jpg"`,
+  res.writeHead(302, {
+    location: `/edt/${login}/${file}`,
   });
-  res.end(image || "Error", "binary");
+  res.end();
 });
 
 app.get("/edt/:login/json", async (req, res) => {
   const { login } = req.params;
   res.status(200).json(await fetchEDT(login));
+});
+
+app.get("/edt/:login/:file", async (req, res) => {
+  const { login, file } = req.params;
+
+  const image = await readFile(join(basepath, login, `${file}.jpg`));
+
+  res.writeHead(200, {
+    "Content-Type": "image/jpeg",
+    "Content-Disposition": `inline; filename="${login}_${new Date().toLocaleDateString()}.jpg"`,
+  });
+  res.end(image || "Error", "binary");
 });
