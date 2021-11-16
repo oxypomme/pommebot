@@ -9,7 +9,7 @@ import { IModule } from "./modules/.types";
 
 (async () => {
   const modules = (await readdir(__dirname + "/modules")).filter(
-    (d) => d[0] !== "."
+    (d) => d[0] !== "." && d !== "module-UL"
   );
 
   Logger.get("Modules").info("Detected modules", modules);
