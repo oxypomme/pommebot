@@ -119,8 +119,8 @@ export const fetchEDT = async (
   data.hash = hash(data);
 
   if (prepareHTML) {
-    let days: string[] = [];
-    let hours: string[] = [];
+    const days: string[] = [];
+    const hours: string[] = [];
 
     let date = startDate;
     while (date.isBefore(endDate, "day")) {
@@ -128,8 +128,9 @@ export const fetchEDT = async (
       date = date.add(1, "day");
     }
 
-    for (let i = 8; i < 18; i++) {
-      hours.push(i < 10 ? "0" + i : i.toString());
+    // 8:00 to 17:00
+    for (let i = 0; i < 10; i++) {
+      hours[i] = (i + 8).toString().padStart(2, "0");
     }
 
     return {

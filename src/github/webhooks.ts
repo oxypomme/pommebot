@@ -54,18 +54,17 @@ export const removeWH = async (repo: Repository): Promise<void> => {
     }
   );
   if (status === 200) {
-    for (const { id: hook_id } of webhooks) {
-      await GHApp.octokit.request(
-        "DELETE /repos/{owner}/{repo}/hooks/{hook_id}",
-        {
+    await Promise.all(
+      webhooks.map(({ id: hook_id }) =>
+        GHApp.octokit.request("DELETE /repos/{owner}/{repo}/hooks/{hook_id}", {
           request: {
             hook,
           },
           owner: owner.name || full_name.split("/")[0],
           repo: name,
           hook_id,
-        }
-      );
-    }
+        })
+      )
+    );
   }
 };

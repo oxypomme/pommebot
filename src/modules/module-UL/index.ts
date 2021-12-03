@@ -11,11 +11,11 @@ const timerFnc = async () => {
   try {
     const config = getConfig();
     if (config.ul && config.ul.logins) {
-      const promises = [] as Promise<string>[];
-      for (const [login, resourceId] of Object.entries(config.ul.logins)) {
-        promises.push(generateEDT(login, resourceId as number));
-      }
-      await Promise.all(promises);
+      await Promise.all(
+        Object.entries(config.ul.logins).map(([login, resourceId]) =>
+          generateEDT(login, resourceId as number)
+        )
+      );
     } else {
       Logger.get("module-UL").error(
         "config.ul or config.ul.logins is undefined",
