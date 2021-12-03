@@ -45,7 +45,7 @@ const parseEvent = (
     },
     teachers: teachers
       // Remove export date
-      .filter((t) => !t.includes("Exporté le:"))
+      .filter((t) => !t[1].includes("Exporté le:"))
       .map((t) => ({
         name: t[1],
         email: "", // No data
@@ -99,7 +99,6 @@ export const fetchEDT = async (
   const data = {
     startDate,
     endDate,
-    hash: hash(events),
     table: Object.values(events)
       // Remove events that are not matching
       .filter(
@@ -117,6 +116,7 @@ export const fetchEDT = async (
       // Parse content
       .map((e) => parseEvent(e, prepareHTML)),
   } as Timetable;
+  data.hash = hash(data);
 
   if (prepareHTML) {
     let days: string[] = [];
