@@ -190,7 +190,7 @@ export const generateEDT = async (
     if (!data.hash)
       sendTimetable(
         login,
-        `https://oxypomme.fr/pommebot/edt/${resourceId}/${data.hash}`,
+        `https://oxypomme.fr/pommebot/edt/${login}/${data.hash}`,
         data.startDate,
         data.endDate
       );
