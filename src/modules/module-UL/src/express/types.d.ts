@@ -11,7 +11,7 @@ export type Teacher = {
   email: string;
 };
 
-export type Event = {
+export type TimeEvent = {
   startDateTime: string | Dayjs;
   endDateTime: string | Dayjs;
   duration: number;
@@ -25,39 +25,21 @@ export type Event = {
   }[];
 };
 
-export type GraphQLError = {
-  message: string;
-  locations: {
-    line: number;
-    column: number;
-  }[];
-  path: string[];
-  extensions: {
-    code: string;
-  };
-};
-
-export type GraphQLResult = {
-  data: {
-    timetable: {
-      plannings: {
-        events: Event[];
-      }[];
-    };
-  };
-  errors?: GraphQLError[];
-};
-
-export type ParsedEvent = Event & {
+export type HTMLTimeEvent = TimeEvent & {
   classnames: string;
   startTime: string;
   endTime: string;
 };
 
-export type ParsedTimetable = {
+export type Timetable = {
   startDate: Dayjs;
   endDate: Dayjs;
-  hours?: string[];
-  days?: string[];
-  timetable: ParsedEvent[];
+  hash: string;
+  table: (TimeEvent | HTMLTimeEvent)[];
+};
+
+export type ParsedTimetable = Timetable & {
+  hours: string[];
+  days: string[];
+  table: HTMLTimeEvent[];
 };

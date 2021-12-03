@@ -6,14 +6,16 @@ import { clearCache, generateEDT } from "./src/express/multi";
 
 let timer: NodeJS.Timer;
 
-const timerFnc = () => {
+const timerFnc = async () => {
   Logger.get("module-UL").info("Checking EDTs");
   try {
     const config = getConfig();
     if (config.ul && config.ul.logins) {
-      for (const login of config.ul.logins) {
-        generateEDT(login);
+      const promises = [] as Promise<string>[];
+      for (const [login, resourceId] of Object.entries(config.ul.logins)) {
+        promises.push(generateEDT(login, resourceId as number));
       }
+      await Promise.all(promises);
     } else {
       Logger.get("module-UL").error(
         "config.ul or config.ul.logins is undefined",
@@ -30,7 +32,7 @@ export const start = async (): Promise<boolean> => {
   import("./src/express");
 
   timerFnc();
-  timer = setInterval(() => timerFnc(), 60 * 60 * 1000);
+  timer = setInterval(async () => await timerFnc(), 60 * 60 * 1000);
 
   addCommand([
     {
@@ -43,25 +45,42 @@ export const start = async (): Promise<boolean> => {
           type: 1,
           action: async (interaction: CommandInteraction): Promise<void> => {
             const login = interaction.options.getString("login");
+            const resourceId = interaction.options.getString("resourceId");
+            if (!login || !resourceId) {
+              interaction.reply({
+                content: "At least on param is incorrect",
+                ephemeral: true,
+              });
+              return;
+            }
+
             const config = getConfig();
+
+            const logins = config.ul?.logins ?? {};
+            logins[login] = parseInt(resourceId);
             config.add({
               ul: {
                 ...config.ul,
-                logins: config.ul?.logins
-                  ? [...config.ul?.logins, login]
-                  : [login],
+                logins,
               },
             });
-            generateEDT(login ?? "");
+
             interaction.reply({
               content: "Config updated",
               ephemeral: true,
             });
+            await generateEDT(login, parseInt(resourceId));
           },
           options: [
             {
               name: "login",
-              description: "The login to watch",
+              description: "The login of the user",
+              type: 3,
+              required: true,
+            },
+            {
+              name: "resourceId",
+              description: "The resourceId to watch",
               type: 3,
               required: true,
             },
@@ -73,7 +92,7 @@ export const start = async (): Promise<boolean> => {
           type: 1,
           action: async (interaction: CommandInteraction): Promise<void> => {
             await clearCache();
-            timerFnc();
+            await timerFnc();
             interaction.reply({
               content: "Timetables reloaded",
               ephemeral: true,

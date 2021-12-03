@@ -15,12 +15,20 @@ export const sendTimetable = async (
     (c) => c.name === "edts"
   ) as CategoryChannel;
 
-  const chan = categ.children.find(
+  let chan = categ.children.find(
     (c) => c.name === login && c instanceof TextChannel
-  ) as TextChannel;
-  // Delete previous messages
-  // TODO: testing needed
-  await chan.bulkDelete(chan.messages.cache);
+  ) as TextChannel | undefined;
+
+  if (!chan) {
+    chan = (await guild()?.channels.create(login, {
+      parent: categ.id,
+    })) as TextChannel;
+  } else {
+    // Delete previous messages
+    // TODO: testing needed
+    await chan.bulkDelete(chan.messages.cache);
+  }
+
   // Send EDT
   const embed = createEmbed({
     title: `${login} - EDT`,
