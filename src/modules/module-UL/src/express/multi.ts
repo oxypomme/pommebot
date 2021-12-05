@@ -21,8 +21,15 @@ const parseEvent = (
   e: ical.CalendarComponent,
   prepareHTML: boolean
 ): TimeEvent | HTMLTimeEvent => {
-  const startDateTime = dayjs(e.start as ical.DateWithTimeZone);
-  const endDateTime = dayjs(e.end as ical.DateWithTimeZone);
+  // Fuck you France
+  const summerHour = dayjs().isBefore("2021-10-31 04:00:00");
+
+  const startDateTime = dayjs(e.start as ical.DateWithTimeZone)
+    .utc()
+    .add(summerHour ? 2 : 1, "h");
+  const endDateTime = dayjs(e.end as ical.DateWithTimeZone)
+    .utc()
+    .add(summerHour ? 2 : 1, "h");
 
   const [group, ...teachers] = (e.description as string).matchAll(
     /(?:(.+)\n)/g
