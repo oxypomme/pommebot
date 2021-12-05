@@ -31,7 +31,7 @@ export const start = async (): Promise<boolean> => {
   // Start express
   import("./src/express");
 
-  timerFnc();
+  await timerFnc();
   timer = setInterval(async () => await timerFnc(), 60 * 60 * 1000);
 
   addCommand([

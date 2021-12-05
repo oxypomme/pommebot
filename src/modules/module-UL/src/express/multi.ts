@@ -187,14 +187,13 @@ export const generateEDT = async (
       },
     })) as Buffer;
 
-    // TODO: Dirty
-    if (!data.hash)
-      sendTimetable(
-        login,
-        `https://oxypomme.fr/pommebot/edt/${login}/${data.hash}`,
-        data.startDate,
-        data.endDate
-      );
+    await sendTimetable(
+      login,
+      // TODO: Dirty
+      `https://oxypomme.fr/pommebot/edt/${login}/${data.hash}`,
+      data.startDate,
+      data.endDate
+    );
   }
   return data.hash;
 };

@@ -12,7 +12,7 @@ export const sendTimetable = async (
   endDate: Dayjs
 ): Promise<void> => {
   const categ = guild()?.channels.cache.find(
-    (c) => c.name === "edts"
+    (c) => c.name === "📅edts"
   ) as CategoryChannel;
 
   let chan = categ.children.find(
