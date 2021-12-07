@@ -7,7 +7,6 @@ import { clearCache, generateEDT } from "./src/express/multi";
 let timer: NodeJS.Timer;
 
 const timerFnc = async () => {
-  Logger.get("module-UL").info("Checking EDTs");
   try {
     const config = getConfig();
     if (config.ul && config.ul.logins) {

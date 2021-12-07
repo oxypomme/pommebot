@@ -19,7 +19,7 @@ app.get("/edt/:login", async (req, res) => {
   }
 
   res.writeHead(302, {
-    location: `/edt/${login}/${file}`,
+    location: `/pommebot/edt/${login}/${file}`,
   });
   res.end();
 });
