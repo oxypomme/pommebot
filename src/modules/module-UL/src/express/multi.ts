@@ -17,6 +17,22 @@ import type {
 dayjs.extend(utc);
 dayjs.locale("fr");
 
+const fetchCalendar = (
+  resources: number,
+  options: { [key: string]: string } = {}
+) =>
+  ical.async.fromURL(
+    "https://planning.univ-lorraine.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?" +
+      Object.entries({
+        resources,
+        projectId: 9,
+        calType: "ical",
+        ...options,
+      })
+        .map(([key, value]) => `${key}=${value}`)
+        .join("&")
+  );
+
 const parseEvent = (
   e: ical.CalendarComponent,
   prepareHTML: boolean
@@ -97,22 +113,15 @@ export const fetchEDT = async (
 
   const endDate = startDate.endOf("w");
 
-  const events = await ical.async.fromURL(
-    `https://planning.univ-lorraine.fr/jsp/custom/modules/plannings/anonymous_cal.jsp?resources=${resourceId}&projectId=9&calType=ical&firstDate=${startDate.format(
-      "YYYY-MM-DD"
-    )}&nbWeeks=1`
-  );
+  const events = await fetchCalendar(resourceId, {
+    firstDate: startDate.format("YYYY-MM-DD"),
+    lastDate: endDate.format("YYYY-MM-DD"),
+  });
 
   const data = {
     startDate,
     endDate,
     table: Object.values(events)
-      // Remove events that are not matching
-      .filter(
-        (e) =>
-          (e.start as ical.DateWithTimeZone).getTime() <
-          endDate.toDate().getTime()
-      )
       // Sort events
       .sort((a, b) =>
         a.start && b.start
