@@ -1,5 +1,6 @@
 import { Dayjs } from "dayjs";
 import { CategoryChannel, TextChannel } from "discord.js";
+import Logger from "js-logger";
 import { client } from "../../../..";
 import { createEmbed } from "../../../../bot/discord";
 
@@ -25,8 +26,11 @@ export const sendTimetable = async (
     })) as TextChannel;
   } else {
     // Delete previous messages
-    // TODO: testing needed
-    await chan.bulkDelete(chan.messages.cache);
+    try {
+      await chan.bulkDelete(chan.messages.cache);
+    } catch (error) {
+      Logger.get("module-UL").warn(error);
+    }
   }
 
   // Send EDT
