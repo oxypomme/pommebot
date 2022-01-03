@@ -77,7 +77,7 @@ export const renameChannel = async (
       iconURL:
         "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
     },
-    description: `[${owner}}/${from}](${chan?.topic}) a été renommé en [${to.full_name}](https://github.com/${to.full_name})`,
+    description: `[${owner}/${from}](${chan?.topic}) a été renommé en [${to.full_name}](https://github.com/${to.full_name})`,
   });
   await chan?.send({ embeds: [embed] });
   await chan?.setTopic(`https://github.com/${to.full_name}`);

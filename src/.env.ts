@@ -31,5 +31,6 @@ Logger.useDefaults({
         ` ${NodeColors.Reset}` +
         color
     );
+    messages.push(NodeColors.Reset);
   },
 });
