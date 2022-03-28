@@ -1,4 +1,4 @@
 {
   "debug.javascript.autoAttachFilter": "disabled",
-  "conventionalCommits.scopes": ["module-UL"]
+  "conventionalCommits.scopes": []
 }
