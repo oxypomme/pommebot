@@ -22,15 +22,9 @@ app.use(
 
 app.use(express.static(__dirname + "/public"));
 
-GHApp.webhooks.onAny(async ({ id, name, payload }) => {
-  if (
-    (name as string) === "registry_package" &&
-    (payload as any).action == "published"
-  ) {
-    await notifyNewPackage(payload);
-  }
+GHApp.webhooks.on("registry_package.published", async ({ payload }) => {
+  await notifyNewPackage(payload);
 });
-
 GHApp.webhooks.on("repository.created", async ({ payload }) => {
   await createChannel(payload.repository);
 });
